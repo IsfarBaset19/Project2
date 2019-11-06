@@ -6,9 +6,23 @@ import java.util.*;
 
 class CentralizedServer {
 
-   
 private static final int PORT = 1235;
-    public static void main(String[] args) throws IOException
+
+// This arrayList of Users holds the list of active users currently registered to the server
+List<User> userList = new ArrayList<>();
+List<>
+
+// Code for registering a new user to the server
+private addUser() {
+	
+}
+
+// Code for removing a user from the server
+private removeUser() {
+	
+}
+
+public static void main(String[] args) throws IOException
 
     {
 
@@ -24,6 +38,28 @@ private static final int PORT = 1235;
             handler.start();
         } while (true);
     }
+}
+
+// Class that holds the important information for users of the server
+class User {
+	String username;
+	String IPAddress;
+	String port;
+	String connectionSpeed;
+	UserFileList files;
+	
+	User(String pUsername, String pIPAddress, String pPort, String pConnectionSpeed){
+		this.username = pUsername;
+		this.IPAddress = pIPAddress;
+		this.port = pPort;
+		this.connectionSpeed = pConnectionSpeed;
+	}
+	
+}
+
+// Class that holds file information for a single user
+class UserFileList{
+	
 }
 
 class ClientHandler extends Thread {
