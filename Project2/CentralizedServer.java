@@ -8,26 +8,26 @@ class CentralizedServer {
 
 	// This arrayList of Users holds the list of active users currently
 	// registered to the server
-	List<User> userList = new ArrayList<>();
+	private List<User> userList = new ArrayList<>();
 
 	// This arrayList holds the list of UserFileLists
-	List<UserFileList> fileList = new ArrayList<>();
+	private List<UserFileList> fileList = new ArrayList<>();
 
 	// Code for registering a new user to the server
-	private addUser() {
-	
+	void addUser(User temp) {
+		userList.add(temp);
 	}
 
 	// Code for removing a user from the server
-	private removeUser() {
+	void removeUser(User temp) {
+	 userList.remove(temp);
+	}
+
+	void addFiles() {
 	
 	}
 
-	private addFiles() {
-	
-	}
-
-	private removeFiles() {
+	void removeFiles() {
 	
 	}
 
@@ -76,7 +76,7 @@ class UserFileList {
 		this.files = new ArrayList<>();
 	}
 	
-	UserFileList(String pHostName, list<FileInfo> pFiles) {
+	UserFileList(String pHostName, List<FileInfo> pFiles) {
 		this.hostName = pHostName;
 		this.files = new ArrayList<>();
 		this.files = pFiles;
@@ -93,7 +93,7 @@ class FileInfo {
 		this.keywords = new ArrayList<>();
 	}
 	
-	FileInfo(String pFileName, list<String> pKeywords) {
+	FileInfo(String pFileName, List<String> pKeywords) {
 		this.fileName = pFileName;
 		this.keywords = new ArrayList<>();
 		this.keywords = pKeywords;
