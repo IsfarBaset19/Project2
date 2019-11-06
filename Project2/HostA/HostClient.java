@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public class HostClient {
    
-    private static final int PORT = 1200;
+	private static final int PORT = 1200;
     public static ArrayList<String> response = new ArrayList<String>();
      
     public static void main(String[] args) throws IOException 
