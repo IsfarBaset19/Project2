@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JSeparator;
 import javax.swing.JList;
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
 import javax.swing.JTextArea;
 import javax.swing.JTable;

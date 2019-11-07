@@ -10,8 +10,10 @@ public class HostClient {
 	private static final int PORT = 1200;
 
 	public static ArrayList<String> response = new ArrayList<String>();
-
-	private List<UserFileList> fileList = new ArrayList<>();
+	
+	void contructFileList() {
+		
+	}
 
 	public static void main(String[] args) throws IOException {
 
@@ -37,6 +39,8 @@ public class HostClient {
 					System.out.println(
 							"\nYou are connected to the server");
 					response.add("Connected to 127.0.0.1");
+					
+					//After the confirmation from the server we need to send over the list of files amd 
 				}
 
 				if (command.equals("register")) {
@@ -66,15 +70,7 @@ public class HostClient {
 		}
 
 	}
-		// need to iterate through the file that lists 
-		// available files and their keywords and add them to
-		// the filelist here.
-	private void constructFileList(File directory){
-		fileInfo temp = new fileInfo();
-		// add filename to temp here
-		// iteratively add keywords to temp
-		fileList.add(temp);
-    }
+
 
 	public ArrayList<String> getResponse() {
 		return response;

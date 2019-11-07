@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import HostA.fileInfo;
+
 class CentralizedServer {
 
 	private static final int PORT = 1235;
@@ -13,6 +15,10 @@ class CentralizedServer {
 	// This arrayList holds the list of UserFileLists
 	private List<UserFileList> fileList = new ArrayList<>();
 
+	// need to iterate through the file that lists
+	// available files and their keywords and add them to
+	// the filelist here.
+
 	// Code for registering a new user to the server
 	void addUser(User temp) {
 		userList.add(temp);
@@ -20,15 +26,15 @@ class CentralizedServer {
 
 	// Code for removing a user from the server
 	void removeUser(User temp) {
-	 userList.remove(temp);
+		userList.remove(temp);
 	}
 
 	void addFiles() {
-	
+
 	}
 
 	void removeFiles() {
-	
+
 	}
 
 	public static void main(String[] args) throws IOException
@@ -42,8 +48,8 @@ class CentralizedServer {
 			System.out.println("\n\nUser Connected!\n\n");
 
 			// Creating threads
-			ClientHandler handler =
-					new ClientHandler(connectionSocket);
+			ClientHandler handler = new ClientHandler(
+					connectionSocket);
 			handler.start();
 		} while (true);
 	}
@@ -71,11 +77,15 @@ class UserFileList {
 	String hostName;
 	List<FileInfo> files;
 
-	UserFileList(){
+	void add(FileInfo temp) {
+		files.add(temp);
+	}
+	
+	UserFileList() {
 		this.hostName = "";
 		this.files = new ArrayList<>();
 	}
-	
+
 	UserFileList(String pHostName, List<FileInfo> pFiles) {
 		this.hostName = pHostName;
 		this.files = new ArrayList<>();
@@ -88,11 +98,11 @@ class FileInfo {
 	String fileName;
 	List<String> keywords;
 
-	FileInfo(){
+	FileInfo() {
 		this.fileName = "";
 		this.keywords = new ArrayList<>();
 	}
-	
+
 	FileInfo(String pFileName, List<String> pKeywords) {
 		this.fileName = pFileName;
 		this.keywords = new ArrayList<>();
@@ -176,22 +186,21 @@ class ClientHandler extends Thread {
 
 					Socket dataSocket = new Socket(
 							connectionSocket.getInetAddress(), PORT);
-					DataOutputStream dataOutToClient =
-							new DataOutputStream(
-									dataSocket.getOutputStream());
+					DataOutputStream dataOutToClient = new DataOutputStream(
+							dataSocket.getOutputStream());
 
 					String fileName = tokens.nextToken();
-					String filePath =
-							directory.getPath() + "/" + fileName;
+					String filePath = directory.getPath() + "/"
+							+ fileName;
 					File myFile = new File(filePath);
 
 					if (myFile.exists()) {
-						byte[] mybytearray =
-								new byte[(int) myFile.length() + 1];
-						FileInputStream fis =
-								new FileInputStream(myFile);
-						BufferedInputStream bis =
-								new BufferedInputStream(fis);
+						byte[] mybytearray = new byte[(int) myFile
+								.length() + 1];
+						FileInputStream fis = new FileInputStream(
+								myFile);
+						BufferedInputStream bis = new BufferedInputStream(
+								fis);
 						bis.read(mybytearray, 0, mybytearray.length);
 						System.out.println("Sending...");
 						dataOutToClient.write(mybytearray, 0,
