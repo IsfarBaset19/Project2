@@ -2,11 +2,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import HostA.fileInfo;
-
 class CentralizedServer {
 
-	private static final int PORT = 1235;
+	private static final int PORT = 1200;
 
 	// This arrayList of Users holds the list of active users currently
 	// registered to the server
@@ -162,6 +160,7 @@ class ClientHandler extends Thread {
 	}
 
 	public void run() {
+		int port = 1200;
 		while (connectionSocket.isClosed() == false) {
 			try {
 
@@ -169,7 +168,7 @@ class ClientHandler extends Thread {
 				if (fromClient != null) {
 					tokens = new StringTokenizer(fromClient);
 					firstln = tokens.nextToken();
-					int port;
+					//int port;
 					port = Integer.parseInt(firstln);
 					clientCommand = tokens.nextToken();
 					// fileName = tokens.nextToken();
@@ -182,10 +181,10 @@ class ClientHandler extends Thread {
 
 				if (clientCommand.equals("get")) {
 
-					int PORT = 1234 + 2;
+					//int PORT = 1234 + 2;
 
 					Socket dataSocket = new Socket(
-							connectionSocket.getInetAddress(), PORT);
+							connectionSocket.getInetAddress(), port);
 					DataOutputStream dataOutToClient = new DataOutputStream(
 							dataSocket.getOutputStream());
 

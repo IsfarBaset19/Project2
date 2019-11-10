@@ -38,12 +38,15 @@ public class gui {
 
     private String message;
     private ArrayList<String> results;
+
+    private String responseFromClient;
     
     private JScrollPane scroll;
     private JScrollPane scroll1;
 
     protected Thread listener;
-    
+
+    private int port = 0;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -82,10 +85,10 @@ public class gui {
                     String PORT =  portNumber.getText();
                     String serverHost = serverHostName.getText();
                     message = "connect " + serverHost + " " + PORT;
-
-                    results = host.getResponse();
+                    port = Integer.parseInt(PORT);
+                    host.connectToCentralServer(port, serverHost);
+                    responseFromClient = host.responseFromClient;
                     printResults();
-                    
                 }
                 catch(Exception e){
                     
@@ -227,7 +230,18 @@ public class gui {
         quitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 message = "quit";
-            
+                
+                // disconnect command
+                // outToServer.writeBytes(port + " " + sentence + " " + "\n");
+                // System.out.println("\nServer Disconnected\n");
+                // System.exit(0);
+                try {
+                    host.disconnectFromCentralServer();
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                } catch (Exception e2) {
+                    
+                }
             }
         });
         
@@ -237,14 +251,20 @@ public class gui {
     }
     
     public void printResults(){
-        if(results != null){
-            textArea.append("\n>> " + message + "\n");
+        // if(results != null){
+        //     textArea.append("\n>> " + message + "\n");
             
-            for(int i = 0; i < results.size(); i++){
-                textArea.append(results.get(i));
-                textArea.append("\n");
-            }
-
+        //     for(int i = 0; i < results.size(); i++){
+        //         textArea.append(results.get(i));
+        //         textArea.append("\n");
+        //     }
+        // }
+        if(!responseFromClient.equals("")){
+            textArea.append("\n>> " + message + "\n");
+            textArea.append(responseFromClient + "\n");
+        }
+        else {
+            textArea.append("\nNOT WORKING");
         }
     }
 }
