@@ -104,12 +104,11 @@ public class HostClient {
 	public void registerToCentralServer(String clientUserName, String clientHostName, String connectionType)
 			throws IOException {
 		port1 += 2;
-		this.uploadFileListToServer(connectionType, clientHostName);
 		// delimit using commas and send the registration information to the server
 		String userInformation = clientUserName + "," + clientHostName + "," + connectionType;
 		outToCentralServer.writeBytes(port1 + " register " + userInformation + "\n");
 		outToCentralServer.flush();
-		
+		uploadFileListToServer(connectionType, clientHostName);
 		responseFromClient = "Registered to central server. Uploading filelist...";
 	}
 
@@ -117,7 +116,7 @@ public class HostClient {
 		port1 += 2;
 		// get the file list and put it into a string thats delimited by commmas
 		serverFiles(directory, listOfFilesOnClient);
-		String outputList = new String(port1 + " uploadFileList " + clientHostName + " " + clientConnectionType);
+		String outputList = new String(port1 + " uploadFileList " + clientHostName + " " + clientConnectionType + " ");
 
 		if (listOfFilesOnClient.isEmpty()) {
 			// dataOutToCentralServer.writeUTF("empty");

@@ -127,8 +127,47 @@ class ClientHandler extends Thread {
 		}
 	}
 
-	private void removeFiles() {
+	private void removeFiles(String userHostName, String userConnectionType) {
+		String fileName = "allServerFiles.txt";
+		try {
+			List<String> currentFile = new ArrayList<>();
+			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			String stringIn;
+			//read file and add everything that the user didnt add into another list
+			while((stringIn = in.readLine()) != null) {
+				if(!stringIn.contains(userHostName + "," + userConnectionType)){
+					currentFile.add(stringIn);
+				}
+			}
+			in.close();
+			updateAvailableFiles(currentFile, fileName);
+		} catch (Exception e){
 
+		}
+	}
+
+	private void updateAvailableFiles(List<String> currentFile, String filename) throws IOException{
+		//remove file and recreate and empty one
+		String currentDirectory = System.getProperty("user.dir");
+		String serverFileList = currentDirectory + "/allServerFiles.txt";
+		File file = new File(serverFileList);
+		if(file.exists()){
+			file.delete();
+		}
+		file.createNewFile();
+		//read updated file into new file
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+			int i = 0;
+			for (i = 0; i < currentFile.size(); i++){
+				out.write(currentFile.get(i) + "\n");
+			}
+			out.close();
+			//byte[] bytesArray = fileList.getBytes();
+			System.out.println("File properly updated");
+		} catch(Exception e) {
+
+		}
 	}
 
 	String fromClient;
@@ -177,6 +216,7 @@ class ClientHandler extends Thread {
 		int port = 1200;
 		while (connectionSocket.isClosed() == false) {
 			try {
+
 				fromClient = inFromClient.readLine();
 				if (fromClient != null) {
 					tokens = new StringTokenizer(fromClient);
@@ -190,37 +230,37 @@ class ClientHandler extends Thread {
 				// if (fileName == null) {
 				// fileName = "noFileFound.txt";
 				// }
-				serverFiles(directory, listOfFiles);
+				//serverFiles(directory, listOfFiles);
 
-				if (clientCommand.equals("get")) {
+				// if (clientCommand.equals("get")) {
 
-					// int PORT = 1234 + 2;
+				// 	// int PORT = 1234 + 2;
 
-					Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-					DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+				// 	Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+				// 	DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
 
-					String fileName = tokens.nextToken();
-					String filePath = directory.getPath() + "/" + fileName;
-					File myFile = new File(filePath);
+				// 	String fileName = tokens.nextToken();
+				// 	String filePath = directory.getPath() + "/" + fileName;
+				// 	File myFile = new File(filePath);
 
-					if (myFile.exists()) {
-						byte[] mybytearray = new byte[(int) myFile.length() + 1];
-						FileInputStream fis = new FileInputStream(myFile);
-						BufferedInputStream bis = new BufferedInputStream(fis);
-						bis.read(mybytearray, 0, mybytearray.length);
-						System.out.println("Sending...");
-						dataOutToClient.write(mybytearray, 0, mybytearray.length);
-						dataOutToClient.flush();
-						bis.close();
-					} else {
-						System.out.println("File Not Found");
-					}
+				// 	if (myFile.exists()) {
+				// 		byte[] mybytearray = new byte[(int) myFile.length() + 1];
+				// 		FileInputStream fis = new FileInputStream(myFile);
+				// 		BufferedInputStream bis = new BufferedInputStream(fis);
+				// 		bis.read(mybytearray, 0, mybytearray.length);
+				// 		System.out.println("Sending...");
+				// 		dataOutToClient.write(mybytearray, 0, mybytearray.length);
+				// 		dataOutToClient.flush();
+				// 		bis.close();
+				// 	} else {
+				// 		System.out.println("File Not Found");
+				// 	}
 
-					dataSocket.close();
-					System.out.println("Data Socket closed");
-				}
+				// 	dataSocket.close();
+				// 	System.out.println("Data Socket closed");
+				// }
 
-				else if (clientCommand.equals("register")) {
+				if (clientCommand.equals("register")) {
 					String userInformation = tokens.nextToken();
 					String[] userCredentials = userInformation.split(",");
 					User newUser = new User(userCredentials[0], userCredentials[1], firstln, userCredentials[2]);
@@ -230,7 +270,7 @@ class ClientHandler extends Thread {
 					// System.out.println(userList);
 				}
 
-				else if (clientCommand.equals("uploadFileList")) {
+				if (clientCommand.equals("uploadFileList")) {
 					String userHostName = tokens.nextToken();
 					String userConnectionType = tokens.nextToken();
 					String fileListString = tokens.nextToken();
@@ -252,6 +292,12 @@ class ClientHandler extends Thread {
 
 				if (clientCommand.equals("unregister")) {
 					// CODE FOR UNREGISTERING CLIENT
+					String userInformation = tokens.nextToken();
+					String[] userCredentials = userInformation.split(",");
+					User newUser = new User(userCredentials[0], userCredentials[1], firstln, userCredentials[2]);
+					this.removeUser(newUser);
+					this.removeFiles(userCredentials[1], userCredentials[2]);
+					System.out.println("User Un-registered");
 				}
 
 				if (clientCommand.equals("search")) {

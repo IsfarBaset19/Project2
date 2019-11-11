@@ -161,19 +161,16 @@ public class gui {
                     responseFromClient = host.responseFromClient;
                     printResults();
                     responseFromClient = "";
+                    //Upload File List
+                    // try {
+                    // host.uploadFileListToServer(clientConnectionType, clientHostName);
+                    // responseFromClient = host.responseFromClient;
+                    // printResults();
+                    // responseFromClient = "";
+                    // } catch (Exception e){
+
+                    // }
                 } catch (Exception e3) {
-
-                }
-
-                // SECOND Upload the file list to the server that the user has
-                try {
-                    String clientConnectionType = speed.getSelectedItem().toString();
-                    String clientHostName = hostName.getText();
-                    host.uploadFileListToServer(clientConnectionType, clientHostName);
-                    responseFromClient = host.responseFromClient;
-                    printResults();
-                    responseFromClient = "";
-                } catch (Exception e4) {
 
                 }
             }
@@ -240,8 +237,18 @@ public class gui {
         JButton unregisterButton = new JButton("Un-register");
         unregisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 // unregister command
+                try {
+                    String clientUserName = userName.getText();
+                    String clientHostName = hostName.getText();
+                    String clientConnectionType = speed.getSelectedItem().toString();
+                    host.unregisterFromServer(clientUserName, clientHostName, clientConnectionType);
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                    responseFromClient = "";
+                } catch (Exception e5){
+
+                }
             }
         });
 
