@@ -193,6 +193,11 @@ public class gui {
             public void actionPerformed(ActionEvent arg0) {
 
                 // code for search
+                String keywordSearch = searchKeyWord.getText();
+                List<String> returnedQuery = new ArrayList<>();
+                try {
+                    returnedQuery = host.queryFileList(keywordSearch);
+                }
             }
         });
         searchButton.setBounds(320, 115, 100, 23);

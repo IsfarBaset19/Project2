@@ -173,6 +173,25 @@ class ClientHandler extends Thread {
 		}
 	}
 
+	private String queryFiles (String keyword) {
+		String fileName = "allServerFiles.txt";
+		String currentFile = "";
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			String stringIn;
+			//read file and add everything that the user didnt add into another list
+			while((stringIn = in.readLine()) != null) {
+				if(stringIn.contains(keyword)){
+					currentFile += stringIn;
+				}
+			}
+			in.close();
+		} catch (Exception e){
+
+		}
+		return currentFile;
+	}
+
 	String fromClient;
 	String clientCommand;
 	byte[] data;
@@ -303,8 +322,14 @@ class ClientHandler extends Thread {
 					System.out.println("User Un-registered");
 				}
 
-				if (clientCommand.equals("search")) {
+				if (clientCommand.equals("query")) {
 					// CODE FOR SEARCHING FILES
+					String keyword = tokens.nextToken();
+					String returnQuery = new Arraylist<>();
+					returnQuery = this.queryFiles(keyword);
+					outToClient.writeBytes(returnQuery);
+					outToClient.flush();
+					System.out.println("User queried file list");
 				}
 
 				if (clientCommand.equals("quit")) {

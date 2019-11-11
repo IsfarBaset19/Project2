@@ -164,4 +164,24 @@ public class HostClient {
 			}
 		}
 	}
+
+	public List<String> queryFileList (String keywordSearch){
+		port1 += 2;
+		List<String> returnedQuery = new Arraylist<>();
+		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
+		outToCentralServer.flush();
+		String fromServer;
+		fromServer = inFromCentralServer.ReadLine();
+		if(fromServer != null){
+			tokens = new StringTokenizer(fromServer);
+			fromServer = tokens.nextToken();
+		}
+		String [] stringArray = fromServer.split(",");
+		int i = 0;
+		for (i = 0; i < stringArray.length; i++){
+			returnedQuery.add(stringArray[i]);
+		}
+		responseFromClient = "Querying file list";
+		return returnedQuery;
+	}
 }
