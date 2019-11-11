@@ -28,10 +28,10 @@ public class gui {
     private JTextField portNumber;
     private JTextField hostName;
     private JComboBox speed;
-    
+
     private JTextField searchKeyWord;
     private JTable table;
-    
+
     private JTextField command;
     private JTextArea textArea;
     private JTextArea textKeyArea;
@@ -40,7 +40,7 @@ public class gui {
     private ArrayList<String> results;
 
     private String responseFromClient;
-    
+
     private JScrollPane scroll;
     private JScrollPane scroll1;
 
@@ -67,78 +67,78 @@ public class gui {
 
     private void initialize() {
         HostClient host = new HostClient();
-        
+
         frame = new JFrame();
         frame.setBounds(500, 500, 550, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
-        
+
         JButton connectButton = new JButton("Connect");
-        
+
         frame.getRootPane().setDefaultButton(connectButton);
-        
+
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                //code for connect
-                try{
-                    
-                    String PORT =  portNumber.getText();
+                // code for connect
+                try {
+
+                    String PORT = portNumber.getText();
                     String serverHost = serverHostName.getText();
                     message = "connect " + serverHost + " " + PORT;
                     port = Integer.parseInt(PORT);
                     host.connectToCentralServer(port, serverHost);
                     responseFromClient = host.responseFromClient;
                     printResults();
-                }
-                catch(Exception e){
-                    
+                    responseFromClient = "";
+                } catch (Exception e) {
+
                 }
             }
         });
 
         connectButton.setBounds(380, 11, 170, 23);
         frame.getContentPane().add(connectButton);
-        
+
         serverHostName = new JTextField();
         serverHostName.setBounds(125, 12, 159, 20);
         frame.getContentPane().add(serverHostName);
         serverHostName.setColumns(10);
-        
+
         JLabel lblServerHostName = new JLabel("Server Host Name:");
         lblServerHostName.setBounds(8, 15, 133, 14);
         frame.getContentPane().add(lblServerHostName);
-        
+
         JLabel lblNewLabel = new JLabel("Username:");
         lblNewLabel.setBounds(10, 43, 75, 14);
         frame.getContentPane().add(lblNewLabel);
-        
+
         userName = new JTextField();
         userName.setBounds(85, 40, 95, 20);
         frame.getContentPane().add(userName);
         userName.setColumns(10);
-        
+
         JLabel lblPort = new JLabel("Port:");
         lblPort.setBounds(289, 15, 34, 14);
         frame.getContentPane().add(lblPort);
-        
+
         portNumber = new JTextField();
         portNumber.setBounds(325, 12, 52, 20);
         frame.getContentPane().add(portNumber);
         portNumber.setColumns(10);
-        
+
         JLabel lblHostname = new JLabel("Hostname:");
         lblHostname.setBounds(200, 43, 69, 14);
         frame.getContentPane().add(lblHostname);
-        
+
         hostName = new JTextField();
         hostName.setBounds(280, 40, 110, 20);
         frame.getContentPane().add(hostName);
         hostName.setColumns(10);
-        
+
         JLabel lblSpeed = new JLabel("Speed:");
         lblSpeed.setBounds(396, 43, 52, 14);
         frame.getContentPane().add(lblSpeed);
-        
+
         speed = new JComboBox();
         speed.setBounds(442, 40, 105, 20);
         speed.addItem("Ethernet");
@@ -146,33 +146,56 @@ public class gui {
         speed.addItem("T1");
         speed.addItem("T3");
         frame.getContentPane().add(speed);
-        
+
         JButton registerButton = new JButton("Register");
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                
-                //code for register
-              
+
+                // code for register
+                // FIRST Register the user on the server
+                try {
+                    String clientUserName = userName.getText();
+                    String clientHostName = hostName.getText();
+                    String clientConnectionType = speed.getSelectedItem().toString();
+                    host.registerToCentralServer(clientUserName, clientHostName, clientConnectionType);
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                    responseFromClient = "";
+                } catch (Exception e3) {
+
+                }
+
+                // SECOND Upload the file list to the server that the user has
+                try {
+                    String clientConnectionType = speed.getSelectedItem().toString();
+                    String clientHostName = hostName.getText();
+                    host.uploadFileListToServer(clientConnectionType, clientHostName);
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                    responseFromClient = "";
+                } catch (Exception e4) {
+
+                }
             }
         });
 
         registerButton.setBounds(10, 68, 137, 23);
         frame.getContentPane().add(registerButton);
-        
+
         JLabel lblKeyword = new JLabel("Keyword:");
         lblKeyword.setBounds(10, 119, 60, 14);
         frame.getContentPane().add(lblKeyword);
-        
+
         searchKeyWord = new JTextField();
         searchKeyWord.setBounds(71, 116, 250, 20);
         frame.getContentPane().add(searchKeyWord);
         searchKeyWord.setColumns(10);
-        
+
         JButton searchButton = new JButton("Search");
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-               
-               // code for search 
+
+                // code for search
             }
         });
         searchButton.setBounds(320, 115, 100, 23);
@@ -182,34 +205,33 @@ public class gui {
         scroll1 = new JScrollPane(textKeyArea);
         scroll1.setBounds(10, 150, 514, 103);
         frame.getContentPane().add(scroll1);
-        
+
         table = new JTable();
         table.setBorder(new LineBorder(new Color(0, 0, 0), 3));
         table.setBounds(10, 285, 514, -168);
 
         frame.getContentPane().add(table);
-        
+
         JLabel lblEnterCommand = new JLabel("Command:");
         lblEnterCommand.setBounds(10, 300, 95, 14);
         frame.getContentPane().add(lblEnterCommand);
-        
+
         command = new JTextField();
 
         command.setBounds(80, 300, 310, 20);
         frame.getContentPane().add(command);
         command.setColumns(10);
-        
-        
+
         JButton goButton = new JButton("Go");
         goButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
+
                 // go command
             }
         });
         goButton.setBounds(390, 300, 83, 23);
         frame.getContentPane().add(goButton);
-        
+
         textArea = new JTextArea();
         scroll = new JScrollPane(textArea);
         scroll.setBounds(10, 330, 514, 103);
@@ -218,19 +240,19 @@ public class gui {
         JButton unregisterButton = new JButton("Un-register");
         unregisterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              
-              // unregister command 
+
+                // unregister command
             }
         });
-        
-        unregisterButton.setBounds(140, 68, 137, 23); 
+
+        unregisterButton.setBounds(140, 68, 137, 23);
         frame.getContentPane().add(unregisterButton);
-        
+
         JButton quitButton = new JButton("Quit");
         quitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 message = "quit";
-                
+
                 // disconnect command
                 // outToServer.writeBytes(port + " " + sentence + " " + "\n");
                 // System.out.println("\nServer Disconnected\n");
@@ -239,31 +261,31 @@ public class gui {
                     host.disconnectFromCentralServer();
                     responseFromClient = host.responseFromClient;
                     printResults();
+                    responseFromClient = "";
                 } catch (Exception e2) {
-                    
+
                 }
             }
         });
-        
+
         quitButton.setBounds(410, 68, 137, 23);
         frame.getContentPane().add(quitButton);
-        
+
     }
-    
-    public void printResults(){
+
+    public void printResults() {
         // if(results != null){
-        //     textArea.append("\n>> " + message + "\n");
-            
-        //     for(int i = 0; i < results.size(); i++){
-        //         textArea.append(results.get(i));
-        //         textArea.append("\n");
-        //     }
+        // textArea.append("\n>> " + message + "\n");
+
+        // for(int i = 0; i < results.size(); i++){
+        // textArea.append(results.get(i));
+        // textArea.append("\n");
         // }
-        if(!responseFromClient.equals("")){
+        // }
+        if (!responseFromClient.equals("")) {
             textArea.append("\n>> " + message + "\n");
             textArea.append(responseFromClient + "\n");
-        }
-        else {
+        } else {
             textArea.append("\nNOT WORKING");
         }
     }
