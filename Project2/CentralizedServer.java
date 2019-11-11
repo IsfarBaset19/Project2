@@ -133,20 +133,22 @@ class ClientHandler extends Thread {
 			List<String> currentFile = new ArrayList<>();
 			BufferedReader in = new BufferedReader(new FileReader(fileName));
 			String stringIn;
+			String dontAdd = userHostName + "," + userConnectionType;
 			//read file and add everything that the user didnt add into another list
 			while((stringIn = in.readLine()) != null) {
-				if(!stringIn.contains(userHostName + "," + userConnectionType)){
+				if(!stringIn.contains(dontAdd)){
 					currentFile.add(stringIn);
 				}
 			}
 			in.close();
-			updateAvailableFiles(currentFile, fileName);
+			//System.out.println(currentFile);
+			this.updateAvailableFiles(currentFile, fileName);
 		} catch (Exception e){
 
 		}
 	}
 
-	private void updateAvailableFiles(List<String> currentFile, String filename) throws IOException{
+	private void updateAvailableFiles(List<String> currentFile, String fileName) throws IOException{
 		//remove file and recreate and empty one
 		String currentDirectory = System.getProperty("user.dir");
 		String serverFileList = currentDirectory + "/allServerFiles.txt";
@@ -156,6 +158,7 @@ class ClientHandler extends Thread {
 		}
 		file.createNewFile();
 		//read updated file into new file
+		System.out.println("updating file");
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
 			int i = 0;

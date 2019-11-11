@@ -150,29 +150,29 @@ public class gui {
         JButton registerButton = new JButton("Register");
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-
                 // code for register
                 // FIRST Register the user on the server
+                String clientUserName = userName.getText();
+                String clientHostName = hostName.getText();
+                String clientConnectionType = speed.getSelectedItem().toString();
                 try {
-                    String clientUserName = userName.getText();
-                    String clientHostName = hostName.getText();
-                    String clientConnectionType = speed.getSelectedItem().toString();
                     host.registerToCentralServer(clientUserName, clientHostName, clientConnectionType);
                     responseFromClient = host.responseFromClient;
                     printResults();
                     responseFromClient = "";
-                    //Upload File List
-                    // try {
-                    // host.uploadFileListToServer(clientConnectionType, clientHostName);
-                    // responseFromClient = host.responseFromClient;
-                    // printResults();
-                    // responseFromClient = "";
-                    // } catch (Exception e){
-
-                    // }
+                    
                 } catch (Exception e3) {
 
                 }
+
+                try {
+                    host.uploadFileListToServer(clientConnectionType, clientHostName);
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                    responseFromClient = "";
+                    } catch (Exception e){
+
+                    }
             }
         });
 

@@ -95,36 +95,37 @@ public class HostClient {
 
 	public void disconnectFromCentralServer() throws IOException {
 		port1 += 2;
-		outToCentralServer.writeBytes(port1 + " quit\n");
+		outToCentralServer.writeBytes(String.valueOf(port1) + " quit\n");
 		outToCentralServer.flush();
 		responseFromClient = "Disconnected from central server";
-		controlSocketCentralServer.close();
+	
 	}
 
 	public void registerToCentralServer(String clientUserName, String clientHostName, String connectionType)
 			throws IOException {
 		port1 += 2;
+		//this.uploadFileListToServer(connectionType, clientHostName);
 		// delimit using commas and send the registration information to the server
 		String userInformation = clientUserName + "," + clientHostName + "," + connectionType;
-		outToCentralServer.writeBytes(port1 + " register " + userInformation + "\n");
-		outToCentralServer.flush();
-		uploadFileListToServer(connectionType, clientHostName);
-		responseFromClient = "Registered to central server. Uploading filelist...";
+		outToCentralServer.writeBytes(String.valueOf(port1) + " register " + userInformation + "\n");
+		//outToCentralServer.rese;
+		
+		responseFromClient = "Registered to central server. Uploading file list to server...";
 	}
 
 	public void uploadFileListToServer(String clientConnectionType, String clientHostName) throws IOException {
 		port1 += 2;
 		// get the file list and put it into a string thats delimited by commmas
 		serverFiles(directory, listOfFilesOnClient);
-		String outputList = new String(port1 + " uploadFileList " + clientHostName + " " + clientConnectionType + " ");
+		String outputList = new String(String.valueOf(port1) + " uploadFileList " + clientHostName + " " + clientConnectionType + " ");
 
 		if (listOfFilesOnClient.isEmpty()) {
 			// dataOutToCentralServer.writeUTF("empty");
 			// System.out.println("Telling the client there are no files on the server");
 			outputList += "empty";
-			outToCentralServer.writeBytes(outputList);
+			outToCentralServer.writeBytes(outputList + "\n");
 			outToCentralServer.flush();
-			responseFromClient = "Client has no files";
+			responseFromClient = "You have no files";
 		} else {
 			int x = 0;
 			// outputList.concat("The files on the server are:\n");
@@ -135,9 +136,9 @@ public class HostClient {
 			}
 			// System.out.println("Sending the client the files on the server");
 			// dataOutToCentralServer.writeUTF(outputList);
-			outToCentralServer.writeBytes(outputList);
+			outToCentralServer.writeBytes(outputList + "\n");
 			outToCentralServer.flush();
-			responseFromClient = "Successfully sent client file list";
+			responseFromClient = "Successfully uploaded file list";
 		}
 		// System.out.println("Closing data connection");
 
@@ -146,9 +147,9 @@ public class HostClient {
 	public void unregisterFromServer (String clientUserName, String clientHostName, String connectionType) throws IOException {
 		port1 += 2;
 		String userInformation = clientUserName + "," + clientHostName + "," + connectionType;
-		outToCentralServer.writeBytes(port1 + " unregister " + userInformation + "\n");
+		outToCentralServer.writeBytes(String.valueOf(port1) + " unregister " + userInformation + "\n");
 		outToCentralServer.flush();
-		responseFromClient = "Un-registered from central server";
+		responseFromClient = "Un-registered from central server and removed files from file list";
 	}
 
 	public static void serverFiles(File directory, List<String> listOfFilesOnClient) {
