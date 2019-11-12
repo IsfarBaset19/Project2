@@ -4,7 +4,8 @@ import java.util.*;
 
 class HostServer {
 
-    private static final int PORT = 1200;
+    public static final int PORT = 4000;
+    public String responseFromServer = "";
    
     public static void main(String[] args) throws IOException
 
@@ -22,6 +23,49 @@ class HostServer {
             handler.start();
         } while (true);
     }
+
+    public int getPortNumber(){
+        return PORT;
+    }
+
+    public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+        int newPort = connectionPort + 2;
+        Socket controlSocket = new Socket("127.0.0.1", connectionPort);
+        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
+        DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(controlSocket.getInputStream()));
+        
+        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + '\n');
+
+        ServerSocket welcomeData = new ServerSocket(newPort);
+        Socket dataSocket = welcomeData.accept();
+
+        DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+
+        int filesize = 6022386;
+        int bytesRead;
+        int current = 0;
+        byte[] mybytearray = new byte[filesize];
+
+        FileOutputStream fos = new FileOutputStream(fileName);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bytesRead = inData.read(mybytearray, 0, mybytearray.length);
+        current = bytesRead;
+
+        do {
+            bytesRead = inData.read(mybytearray, current, (mybytearray.length - current));
+            if (bytesRead >= 0)
+                current += bytesRead;
+        } while (bytesRead > -1);
+
+        bos.write(mybytearray, 0, current);
+        bos.flush();
+        bos.close();
+
+        welcomeData.close();
+        dataSocket.close();
+        controlSocket.close();
+        responseFromServer = "Sucessfully downloaded file";
+    }
 }
 
 class ClientHandler extends Thread {
@@ -34,7 +78,7 @@ class ClientHandler extends Thread {
     byte[] data;
 
     // FILE PATH
-    File directory = new File(".");
+    File directory = new File(System.getProperty("user.dir"));
 
     List<String> listOfFiles = new ArrayList<>();
     String firstln;
@@ -72,7 +116,7 @@ class ClientHandler extends Thread {
         while(connectionSocket.isClosed() == false){
             try {
 
-                int port;
+                int port = 0;
 
                 fromClient = inFromClient.readLine();
                 if (fromClient != null) {
@@ -88,15 +132,9 @@ class ClientHandler extends Thread {
                 }
                 serverFiles(directory, listOfFiles);
 
-
-                if (clientCommand.equals("get")) {
-
-                    // STOR COMMAND FROM PROJECT 1
-                    port = 1200 + 2;
-                   
+                if (clientCommand.equals("retr")) {
                     Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
                     DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-                   
                     // String fileName = "file.txt";
                     String fileName = tokens.nextToken();
                     String filePath = directory.getPath() + "/" + fileName;
@@ -118,12 +156,6 @@ class ClientHandler extends Thread {
                     dataSocket.close();
                     System.out.println("Data Socket closed");
                 }
-          
-                if (clientCommand.equals("quit")) {
-                    System.out.println("Closing connection with a client");
-                    connectionSocket.close();
-                }
-
             }
 
 
@@ -134,3 +166,4 @@ class ClientHandler extends Thread {
         }
     }
 }
+

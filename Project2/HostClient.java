@@ -101,12 +101,12 @@ public class HostClient {
 	
 	}
 
-	public void registerToCentralServer(String clientUserName, String clientHostName, String connectionType)
+	public void registerToCentralServer(String clientUserName, String clientHostName, String connectionType, int serverPort)
 			throws IOException {
 		port1 += 2;
 		//this.uploadFileListToServer(connectionType, clientHostName);
 		// delimit using commas and send the registration information to the server
-		String userInformation = clientUserName + "," + clientHostName + "," + connectionType;
+		String userInformation = clientUserName + "," + clientHostName + "," + connectionType + "," + String.valueOf(serverPort);
 		outToCentralServer.writeBytes(String.valueOf(port1) + " register " + userInformation + "\n");
 		//outToCentralServer.rese;
 		
@@ -186,5 +186,14 @@ public class HostClient {
 			responseFromClient = "Query returned no files";
 		}
 		return fullEntry;
+	}
+
+	public int getClientPort(String userHostName) throws IOException {
+		port1 += 2;
+		outToCentralServer.writeBytes(String.valueOf(port1) + " retrievePort " + userHostName + "\n");
+		outToCentralServer.flush();
+		String fromServer = inFromCentralServer.readLine();
+		responseFromClient = "Found users server port number...";
+		return Integer.parseInt(fromServer);
 	}
 }

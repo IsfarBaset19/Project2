@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class CentralizedServer {
 
@@ -46,6 +47,14 @@ class User {
 		this.userHostName = pUserHostName;
 		this.port = pPort;
 		this.connectionSpeed = pConnectionSpeed;
+	}
+
+	public String getUserHostName() {
+		return this.userHostName;
+	}
+
+	public String getPortNumber() {
+		return this.port;
 	}
 
 }
@@ -285,7 +294,7 @@ class ClientHandler extends Thread {
 				if (clientCommand.equals("register")) {
 					String userInformation = tokens.nextToken();
 					String[] userCredentials = userInformation.split(",");
-					User newUser = new User(userCredentials[0], userCredentials[1], firstln, userCredentials[2]);
+					User newUser = new User(userCredentials[0], userCredentials[1], userCredentials[3], userCredentials[2]);
 					this.addUser(newUser);
 					System.out.println("User Registered\n");
 					// System.out.println(this.userList);
@@ -335,6 +344,19 @@ class ClientHandler extends Thread {
 				if (clientCommand.equals("quit")) {
 					System.out.println("Closing connection with a client");
 					connectionSocket.close();
+				}
+
+				if (clientCommand.equals("retrievePort")){
+					String userHostName = tokens.nextToken();
+					System.out.println(userHostName);
+					for(Datapoint d : userList){
+						if(d.getUserHostName() != null && d.getUserHostName().contains(userHostName)){
+							outToClient.writeBytes(String.valueOf(d.getPortNumber()) + "\n");
+							outToClient.flush();
+							System.out.println("Retrieved user server port number" + String.valueOf(d.getPortNumber()));
+							break;
+						}
+					}
 				}
 
 			}

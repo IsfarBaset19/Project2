@@ -67,6 +67,7 @@ public class gui {
 
     private void initialize() {
         HostClient host = new HostClient();
+        HostServer server = new HostServer();
 
         frame = new JFrame();
         frame.setBounds(500, 500, 550, 500);
@@ -155,8 +156,9 @@ public class gui {
                 String clientUserName = userName.getText();
                 String clientHostName = hostName.getText();
                 String clientConnectionType = speed.getSelectedItem().toString();
+                int serverPort = server.getPortNumber();
                 try {
-                    host.registerToCentralServer(clientUserName, clientHostName, clientConnectionType);
+                    host.registerToCentralServer(clientUserName, clientHostName, clientConnectionType, serverPort);
                     responseFromClient = host.responseFromClient;
                     printResults();
                     responseFromClient = "";
@@ -235,6 +237,34 @@ public class gui {
             public void actionPerformed(ActionEvent e) {
 
                 // go command
+                String fileCommand = command.getText();
+                int serverToConnectToPort = 0;
+                String [] commands = fileCommand.split(" ");
+                String retrieveCommand = commands[0];
+                String fileName = commands[1];
+                String userHostName = commands[2];
+                try {
+                    serverToConnectToPort = host.getClientPort(userHostName);
+                    responseFromClient = host.responseFromClient;
+                    printResults();
+                    responseFromClient = "";
+                } catch (Exception e4){
+
+                }
+                if(serverToConnectToPort != 0){
+                    try{
+                        server.establishConnectionAndPullData(serverToConnectToPort, retrieveCommand, fileName);
+                        responseFromClient = server.responseFromServer;
+                        printResults();
+                        responseFromClient = "";
+                    } catch (Exception e5){
+
+                    }
+                } else {
+                    responseFromClient = "Could not connect to server";
+                    printResults();
+                    responseFromClient = "";
+                }
             }
         });
         goButton.setBounds(390, 300, 83, 23);
