@@ -201,6 +201,9 @@ public class gui {
                 } catch (Exception e) {
 
                 }
+                responseFromClient = host.responseFromClient;
+                printResults();
+                responseFromClient = "";
             }
         });
         searchButton.setBounds(320, 115, 100, 23);

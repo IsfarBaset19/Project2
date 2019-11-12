@@ -19,7 +19,7 @@ public class HostClient {
 
 	Socket controlSocketCentralServer;
 	DataOutputStream outToCentralServer;
-	DataInputStream inFromCentralServer;
+	BufferedReader inFromCentralServer;
 
 	void contructFileList() {
 
@@ -88,7 +88,7 @@ public class HostClient {
 		controlSocketCentralServer = new Socket(serverHostName, port);
 		// System.out.println("\nYou are connected to the server");
 		outToCentralServer = new DataOutputStream(controlSocketCentralServer.getOutputStream());
-		inFromCentralServer = new DataInputStream(new BufferedInputStream(controlSocketCentralServer.getInputStream()));
+		inFromCentralServer = new BufferedReader(new InputStreamReader(controlSocketCentralServer.getInputStream()));
 		// response.add("Connected to " + serverHostName);
 		responseFromClient = "Connected to " + serverHostName;
 	}
@@ -163,5 +163,28 @@ public class HostClient {
 				}
 			}
 		}
+	}
+
+	public String queryFileList (String keywordSearch) throws IOException {
+		port1 += 2;
+		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
+		outToCentralServer.flush();
+		String fromServer = "";
+		String fullEntry = "";
+		fromServer = inFromCentralServer.readLine();
+		if(fromServer != null){
+			String [] stringArray = fromServer.split(",");
+			int i = 0;
+			for (i = 0; i < stringArray.length; i++){
+			fullEntry += stringArray[i] + " ";
+			fullEntry += stringArray[++i] + " ";
+			fullEntry += stringArray[++i] + " ";
+			fullEntry += "\n";
+			}
+			responseFromClient = "Query returned with results";	
+		} else {
+			responseFromClient = "Query returned no files";
+		}
+		return fullEntry;
 	}
 }

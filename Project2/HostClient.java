@@ -169,12 +169,10 @@ public class HostClient {
 		port1 += 2;
 		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
 		outToCentralServer.flush();
-		String fromServer;
+		String fromServer = "";
 		String fullEntry = "";
 		fromServer = inFromCentralServer.readLine();
 		if(fromServer != null){
-			StringTokenizer tokens = new StringTokenizer(fromServer);
-			fromServer = tokens.nextToken();
 			String [] stringArray = fromServer.split(",");
 			int i = 0;
 			for (i = 0; i < stringArray.length; i++){
@@ -183,8 +181,10 @@ public class HostClient {
 			fullEntry += stringArray[++i] + " ";
 			fullEntry += "\n";
 			}
+			responseFromClient = "Query returned with results";	
+		} else {
+			responseFromClient = "Query returned no files";
 		}
-		responseFromClient = "Querying file list";
 		return fullEntry;
 	}
 }
