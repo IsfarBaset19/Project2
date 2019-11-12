@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTable;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.JScrollPane;
 
 public class gui {
@@ -194,9 +194,12 @@ public class gui {
 
                 // code for search
                 String keywordSearch = searchKeyWord.getText();
-                List<String> returnedQuery = new ArrayList<>();
+                String returnedQuery = "";
                 try {
                     returnedQuery = host.queryFileList(keywordSearch);
+                    textKeyArea.setText(returnedQuery);
+                } catch (Exception e) {
+
                 }
             }
         });

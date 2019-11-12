@@ -19,7 +19,7 @@ public class HostClient {
 
 	Socket controlSocketCentralServer;
 	DataOutputStream outToCentralServer;
-	DataInputStream inFromCentralServer;
+	BufferedReader inFromCentralServer;
 
 	void contructFileList() {
 
@@ -88,7 +88,7 @@ public class HostClient {
 		controlSocketCentralServer = new Socket(serverHostName, port);
 		// System.out.println("\nYou are connected to the server");
 		outToCentralServer = new DataOutputStream(controlSocketCentralServer.getOutputStream());
-		inFromCentralServer = new DataInputStream(new BufferedInputStream(controlSocketCentralServer.getInputStream()));
+		inFromCentralServer = new BufferedReader(new InputStreamReader(controlSocketCentralServer.getInputStream()));
 		// response.add("Connected to " + serverHostName);
 		responseFromClient = "Connected to " + serverHostName;
 	}
@@ -165,23 +165,26 @@ public class HostClient {
 		}
 	}
 
-	public List<String> queryFileList (String keywordSearch){
+	public String queryFileList (String keywordSearch) throws IOException {
 		port1 += 2;
-		List<String> returnedQuery = new Arraylist<>();
 		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
 		outToCentralServer.flush();
 		String fromServer;
-		fromServer = inFromCentralServer.ReadLine();
+		String fullEntry = "";
+		fromServer = inFromCentralServer.readLine();
 		if(fromServer != null){
-			tokens = new StringTokenizer(fromServer);
+			StringTokenizer tokens = new StringTokenizer(fromServer);
 			fromServer = tokens.nextToken();
-		}
-		String [] stringArray = fromServer.split(",");
-		int i = 0;
-		for (i = 0; i < stringArray.length; i++){
-			returnedQuery.add(stringArray[i]);
+			String [] stringArray = fromServer.split(",");
+			int i = 0;
+			for (i = 0; i < stringArray.length; i++){
+			fullEntry += stringArray[i] + " ";
+			fullEntry += stringArray[++i] + " ";
+			fullEntry += stringArray[++i] + " ";
+			fullEntry += "\n";
+			}
 		}
 		responseFromClient = "Querying file list";
-		return returnedQuery;
+		return fullEntry;
 	}
 }

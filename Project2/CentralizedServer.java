@@ -325,11 +325,12 @@ class ClientHandler extends Thread {
 				if (clientCommand.equals("query")) {
 					// CODE FOR SEARCHING FILES
 					String keyword = tokens.nextToken();
-					String returnQuery = new Arraylist<>();
+					String returnQuery = "";
 					returnQuery = this.queryFiles(keyword);
 					outToClient.writeBytes(returnQuery);
 					outToClient.flush();
 					System.out.println("User queried file list");
+					System.out.println(returnQuery);
 				}
 
 				if (clientCommand.equals("quit")) {
