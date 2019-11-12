@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import com.sun.swing.internal.plaf.basic.resources.basic;
+
 class HostServer {
 
     public static final int PORT = 4000;
@@ -29,11 +31,12 @@ class HostServer {
     }
 
     public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+        //Open connection with other server client
         int newPort = connectionPort + 2;
         Socket controlSocket = new Socket("127.0.0.1", connectionPort);
         DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
-        DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(controlSocket.getInputStream()));
         
+        //Send retrieval request
         outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + '\n');
 
         ServerSocket welcomeData = new ServerSocket(newPort);
@@ -137,8 +140,8 @@ class ClientHandler extends Thread {
                     DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
                     // String fileName = "file.txt";
                     String fileName = tokens.nextToken();
-                    String filePath = directory.getPath() + "/" + fileName;
-                    File myFile = new File(filePath);
+                    //String filePath = directory.getPath() + "/" + fileName;
+                    File myFile = new File(fileName);
                     //System.out.println(filePath);
                     if (myFile.exists()) {
                         byte[] mybytearray = new byte[(int) myFile.length() + 1];

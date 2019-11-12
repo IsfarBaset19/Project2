@@ -84,7 +84,7 @@ public class HostClient {
 	}
 
 	public void connectToCentralServer(int port, String serverHostName) throws IOException {
-		port1 = port + 2;
+		port1 = port;
 		controlSocketCentralServer = new Socket(serverHostName, port);
 		// System.out.println("\nYou are connected to the server");
 		outToCentralServer = new DataOutputStream(controlSocketCentralServer.getOutputStream());
@@ -106,8 +106,9 @@ public class HostClient {
 		port1 += 2;
 		//this.uploadFileListToServer(connectionType, clientHostName);
 		// delimit using commas and send the registration information to the server
-		String userInformation = clientUserName + "," + clientHostName + "," + connectionType + "," + String.valueOf(serverPort);
+		String userInformation = clientUserName + "," + clientHostName + "," + connectionType + "," + String.valueOf(serverPort) + " ";
 		outToCentralServer.writeBytes(String.valueOf(port1) + " register " + userInformation + "\n");
+		outToCentralServer.flush();
 		//outToCentralServer.rese;
 		
 		responseFromClient = "Registered to central server. Uploading file list to server...";
