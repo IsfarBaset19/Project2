@@ -7,6 +7,7 @@ class CentralizedServer {
 
 	private static final int PORT = 1200;
 
+	public static List<User> userList = new ArrayList<>();
 	// need to iterate through the file that lists
 	// available files and their keywords and add them to
 	// the filelist here.
@@ -105,19 +106,18 @@ class ClientHandler extends Thread {
 
 	// This arrayList of Users holds the list of active users currently
 	// registered to the server
-	private List<User> userList = new ArrayList<>();
 
 	// This arrayList holds the list of UserFileLists
 	private List<UserFileList> fileList = new ArrayList<>();
 
 	// Code for registering a new user to the server
 	private void addUser(User temp) {
-		userList.add(temp);
+		CentralizedServer.userList.add(temp);
 	}
 
 	// Code for removing a user from the server
 	private void removeUser(User temp) {
-		userList.remove(temp);
+		CentralizedServer.userList.remove(temp);
 	}
 
 	private void addFiles(String[] fileList) {
@@ -348,12 +348,13 @@ class ClientHandler extends Thread {
 
 				if (clientCommand.equals("retrievePort")){
 					String userHostName = tokens.nextToken();
-					System.out.println(userHostName);
-					for(Datapoint d : userList){
-						if(d.getUserHostName() != null && d.getUserHostName().contains(userHostName)){
-							outToClient.writeBytes(String.valueOf(d.getPortNumber()) + "\n");
+					int i = 0;
+					for(i = 0; i < CentralizedServer.userList.size(); i++){
+						User user = CentralizedServer.userList.get(i);
+						if(user.getUserHostName() != null && user.getUserHostName().contains(userHostName)){
+							outToClient.writeBytes(String.valueOf(user.getPortNumber()) + "\n");
 							outToClient.flush();
-							System.out.println("Retrieved user server port number" + String.valueOf(d.getPortNumber()));
+							System.out.println("Retrieved user server port number" + String.valueOf(user.getPortNumber()));
 							break;
 						}
 					}
