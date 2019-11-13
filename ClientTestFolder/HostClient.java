@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class HostClient {
 
-	private static final int PORT = 1200;
+	//private static final int PORT = 1200;
 
 	public static ArrayList<String> response = new ArrayList<String>();
 	public List<String> listOfFilesOnClient = new ArrayList<>();
@@ -27,61 +27,61 @@ public class HostClient {
 
 	public static void main(String[] args) throws IOException {
 
-		String message, command = "";
-		Scanner clientCommand = new Scanner(System.in);
+		// String message, command = "";
+		// Scanner clientCommand = new Scanner(System.in);
 
-		try {
-			do {
+		// try {
+		// 	do {
 
-				System.out.print("\nEnter Command: ");
+		// 		System.out.print("\nEnter Command: ");
 
-				message = clientCommand.nextLine();
-				StringTokenizer tokens = new StringTokenizer(message);
-				command = tokens.nextToken();
+		// 		message = clientCommand.nextLine();
+		// 		StringTokenizer tokens = new StringTokenizer(message);
+		// 		command = tokens.nextToken();
 
-				if (command.equals("connect")) {
+		// 		if (command.equals("connect")) {
 
-					BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-					Socket controlSocket = new Socket("127.0.0.1", PORT);
+		// 			BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+		// 			Socket controlSocket = new Socket("127.0.0.1", PORT);
 
-					System.out.println("\nYou are connected to the server");
-					response.add("Connected to 127.0.0.1");
+		// 			System.out.println("\nYou are connected to the server");
+		// 			response.add("Connected to 127.0.0.1");
 
-					// After the confirmation from the server we need to send over the list of files
-					// amd
-				}
+		// 			// After the confirmation from the server we need to send over the list of files
+		// 			// amd
+		// 		}
 
-				if (command.equals("register")) {
-					// CODE FOR REGISTER COMMAND
-				}
+		// 		if (command.equals("register")) {
+		// 			// CODE FOR REGISTER COMMAND
+		// 		}
 
-				if (command.equals("unregister")) {
-					// CODE FOR UNREGISTER COMMAND
-				}
+		// 		if (command.equals("unregister")) {
+		// 			// CODE FOR UNREGISTER COMMAND
+		// 		}
 
-				if (command.equals("search")) {
-					// CODE FOR SEARCH COMMAND
+		// 		if (command.equals("search")) {
+		// 			// CODE FOR SEARCH COMMAND
 
-				}
+		// 		}
 
-				if (command.equals("get")) {
+		// 		if (command.equals("get")) {
 
-					// CODE FOR GET COMMAND
+		// 			// CODE FOR GET COMMAND
 
-				}
+		// 		}
 
-			} while (!command.equals("quit"));
+		// 	} while (!command.equals("quit"));
 
-		} catch (IOException e) {
+		// } catch (IOException e) {
 
-			e.printStackTrace();
-		}
+		// 	e.printStackTrace();
+		// }
 
 	}
 
-	public ArrayList<String> getResponse() {
-		return response;
-	}
+	// public ArrayList<String> getResponse() {
+	// 	return response;
+	// }
 
 	public void connectToCentralServer(int port, String serverHostName) throws IOException {
 		port1 = port;
@@ -197,4 +197,43 @@ public class HostClient {
 		responseFromClient = "Found users server port number...";
 		return Integer.parseInt(fromServer);
 	}
+
+	public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+        //Open connection with other server client
+        int newPort = connectionPort + 2;
+        Socket controlSocket = new Socket("127.0.0.1", connectionPort);
+        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
+        
+        //Send retrieval request
+        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + "\n");
+
+        ServerSocket welcomeData = new ServerSocket(newPort);
+        Socket dataSocket = welcomeData.accept();
+
+        DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+
+        int filesize = 6022386;
+        int bytesRead;
+        int current = 0;
+        byte[] mybytearray = new byte[filesize];
+
+        FileOutputStream fos = new FileOutputStream(fileName);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bytesRead = inData.read(mybytearray, 0, mybytearray.length);
+        current = bytesRead;
+
+        do {
+            bytesRead = inData.read(mybytearray, current, (mybytearray.length - current));
+            if (bytesRead >= 0)
+                current += bytesRead;
+        } while (bytesRead > -1);
+
+        bos.write(mybytearray, 0, current);
+        bos.flush();
+        bos.close();
+
+        welcomeData.close();
+        dataSocket.close();
+        responseFromClient = "Sucessfully downloaded file";
+    }
 }

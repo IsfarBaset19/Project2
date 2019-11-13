@@ -2,13 +2,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import com.sun.swing.internal.plaf.basic.resources.basic;
-
 class HostServer {
 
     public static final int PORT = 4000;
     public String responseFromServer = "";
-   
     public static void main(String[] args) throws IOException
 
     {
@@ -28,46 +25,6 @@ class HostServer {
 
     public int getPortNumber(){
         return PORT;
-    }
-
-    public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
-        //Open connection with other server client
-        int newPort = connectionPort + 2;
-        Socket controlSocket = new Socket("127.0.0.1", connectionPort);
-        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
-        
-        //Send retrieval request
-        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + '\n');
-
-        ServerSocket welcomeData = new ServerSocket(newPort);
-        Socket dataSocket = welcomeData.accept();
-
-        DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
-
-        int filesize = 6022386;
-        int bytesRead;
-        int current = 0;
-        byte[] mybytearray = new byte[filesize];
-
-        FileOutputStream fos = new FileOutputStream(fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        bytesRead = inData.read(mybytearray, 0, mybytearray.length);
-        current = bytesRead;
-
-        do {
-            bytesRead = inData.read(mybytearray, current, (mybytearray.length - current));
-            if (bytesRead >= 0)
-                current += bytesRead;
-        } while (bytesRead > -1);
-
-        bos.write(mybytearray, 0, current);
-        bos.flush();
-        bos.close();
-
-        welcomeData.close();
-        dataSocket.close();
-        controlSocket.close();
-        responseFromServer = "Sucessfully downloaded file";
     }
 }
 

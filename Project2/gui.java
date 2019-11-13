@@ -249,12 +249,12 @@ public class gui {
                     printResults();
                     responseFromClient = "";
                 } catch (Exception e4){
-
+                    
                 }
                 if(serverToConnectToPort != 0){
                     try{
-                        server.establishConnectionAndPullData(serverToConnectToPort, retrieveCommand, fileName);
-                        responseFromClient = server.responseFromServer;
+                        host.establishConnectionAndPullData(serverToConnectToPort, retrieveCommand, fileName);
+                        responseFromClient = host.responseFromClient;
                         printResults();
                         responseFromClient = "";
                     } catch (Exception e5){

@@ -292,6 +292,7 @@ class ClientHandler extends Thread {
 				// }
 
 				if (clientCommand.equals("register")) {
+					System.out.println("Registering User");
 					String userInformation = tokens.nextToken();
 					String[] userCredentials = userInformation.split(",");
 					User newUser = new User(userCredentials[0], userCredentials[1], userCredentials[3], userCredentials[2]);

@@ -6,7 +6,6 @@ class HostServer {
 
     public static final int PORT = 5000;
     public String responseFromServer = "";
-   
     public static void main(String[] args) throws IOException
 
     {
@@ -26,45 +25,6 @@ class HostServer {
 
     public int getPortNumber(){
         return PORT;
-    }
-
-    public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
-        int newPort = connectionPort + 2;
-        Socket controlSocket = new Socket("127.0.0.1", connectionPort);
-        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
-        DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(controlSocket.getInputStream()));
-        
-        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + '\n');
-
-        ServerSocket welcomeData = new ServerSocket(newPort);
-        Socket dataSocket = welcomeData.accept();
-
-        DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
-
-        int filesize = 6022386;
-        int bytesRead;
-        int current = 0;
-        byte[] mybytearray = new byte[filesize];
-
-        FileOutputStream fos = new FileOutputStream(fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        bytesRead = inData.read(mybytearray, 0, mybytearray.length);
-        current = bytesRead;
-
-        do {
-            bytesRead = inData.read(mybytearray, current, (mybytearray.length - current));
-            if (bytesRead >= 0)
-                current += bytesRead;
-        } while (bytesRead > -1);
-
-        bos.write(mybytearray, 0, current);
-        bos.flush();
-        bos.close();
-
-        welcomeData.close();
-        dataSocket.close();
-        controlSocket.close();
-        responseFromServer = "Sucessfully downloaded file";
     }
 }
 
@@ -137,8 +97,8 @@ class ClientHandler extends Thread {
                     DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
                     // String fileName = "file.txt";
                     String fileName = tokens.nextToken();
-                    String filePath = directory.getPath() + "/" + fileName;
-                    File myFile = new File(filePath);
+                    //String filePath = directory.getPath() + "/" + fileName;
+                    File myFile = new File(fileName);
                     //System.out.println(filePath);
                     if (myFile.exists()) {
                         byte[] mybytearray = new byte[(int) myFile.length() + 1];
