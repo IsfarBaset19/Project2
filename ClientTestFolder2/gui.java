@@ -306,14 +306,6 @@ public class gui {
                 // System.out.println("\nServer Disconnected\n");
                 // System.exit(0);
                 try {
-                    String clientUserName = userName.getText();
-                    String clientHostName = hostName.getText();
-                    String clientConnectionType = speed.getSelectedItem().toString();
-                    host.unregisterFromServer(clientUserName, clientHostName, clientConnectionType);
-                    //responseFromClient = host.responseFromClient;
-                    //printResults();
-                    //responseFromClient = "";
-
                     host.disconnectFromCentralServer();
                     responseFromClient = host.responseFromClient;
                     printResults();

@@ -120,6 +120,22 @@ class ClientHandler extends Thread {
 		CentralizedServer.userList.remove(temp);
 	}
 
+/*
+	private boolean checkAlreadyRegistered(User temp){
+
+		int i = 0;
+		for (i = 0; i<CentralizedServer.userList.size(); i++){
+			if(i != 0){
+				User listTemp = CentralizedServer.userList.get(i);
+				
+				System.out.println( listTemp.get(userCredentials[0]) + " Object");
+			}
+			
+		}
+		return false;
+	}
+	*/
+
 	private void addFiles(String[] fileList) {
 		String fileName = "allServerFiles.txt";
 		try {
@@ -296,8 +312,35 @@ class ClientHandler extends Thread {
 					String userInformation = tokens.nextToken();
 					String[] userCredentials = userInformation.split(",");
 					User newUser = new User(userCredentials[0], userCredentials[1], userCredentials[3], userCredentials[2]);
-					this.addUser(newUser);
-					System.out.println("User Registered\n");
+					String tempName1 = userCredentials[1];
+					//System.out.println(tempName1);
+					
+					//String userHN = tokens.nextToken();
+					boolean alreadyRegistered = false;
+					int i = 0;
+					for(i = 0; i < CentralizedServer.userList.size(); i++){
+						User user = CentralizedServer.userList.get(i);
+						
+						if(user.getUserHostName() != null){
+							String tempName2 = String.valueOf(user.getUserHostName());
+							//System.out.println(tempName2);
+							if(tempName1.equals(tempName2)){
+								alreadyRegistered = true;
+								break;
+							}
+						}
+					}
+	
+					if (alreadyRegistered){
+						System.out.println("THIS USER IS ALREADY REGISTERED!\n");
+						this.removeUser(newUser);
+						this.removeFiles(userCredentials[1], userCredentials[2]);
+					}else{
+						
+						this.addUser(newUser);
+						System.out.println("User Registered\n");
+					}
+					
 					// System.out.println(this.userList);
 					// System.out.println(userList);
 				}
@@ -344,6 +387,13 @@ class ClientHandler extends Thread {
 
 				if (clientCommand.equals("quit")) {
 					System.out.println("Closing connection with a client");
+					
+					String userInformation = tokens.nextToken();
+					String[] userCredentials = userInformation.split(",");
+					User newUser = new User(userCredentials[0], userCredentials[1], firstln, userCredentials[2]);
+					this.removeUser(newUser);
+					this.removeFiles(userCredentials[1], userCredentials[2]);
+					
 					connectionSocket.close();
 				}
 
