@@ -146,7 +146,7 @@ public class HostClient {
 			}
 			// System.out.println("Sending the client the files on the server");
 			// dataOutToCentralServer.writeUTF(outputList);
-			outToCentralServer.writeBytes(outputList + " \n");
+			outToCentralServer.writeBytes(outputList + "\n");
 			outToCentralServer.flush();
 			responseFromClient = "Successfully uploaded file list";
 		}
@@ -175,9 +175,9 @@ public class HostClient {
 		}
 	}
 
-	public String queryFileList (String keywordSearch) throws IOException {
+	public String queryFileList (String keywordSearch, String userHostName) throws IOException {
 		port1 += 2;
-		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
+		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + " " + userHostName + "\n");
 		outToCentralServer.flush();
 		String fromServer = "";
 		String fullEntry = "";
@@ -214,7 +214,7 @@ public class HostClient {
         DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
         
         //Send retrieval request
-        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + " \n");
+        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + "\n");
 
         ServerSocket welcomeData = new ServerSocket(newPort);
         Socket dataSocket = welcomeData.accept();
