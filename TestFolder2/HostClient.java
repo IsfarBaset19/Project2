@@ -20,6 +20,7 @@ public class HostClient {
 	Socket controlSocketCentralServer;
 	DataOutputStream outToCentralServer;
 	BufferedReader inFromCentralServer;
+	DataOutputStream outToClientServer;
 
 	void contructFileList() {
 
@@ -146,7 +147,7 @@ public class HostClient {
 			}
 			// System.out.println("Sending the client the files on the server");
 			// dataOutToCentralServer.writeUTF(outputList);
-			outToCentralServer.writeBytes(outputList + "\n");
+			outToCentralServer.writeBytes(outputList + " \n");
 			outToCentralServer.flush();
 			responseFromClient = "Successfully uploaded file list";
 		}
@@ -175,9 +176,9 @@ public class HostClient {
 		}
 	}
 
-	public String queryFileList (String keywordSearch, String userHostName) throws IOException {
+	public String queryFileList (String keywordSearch) throws IOException {
 		port1 += 2;
-		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + " " + userHostName + "\n");
+		outToCentralServer.writeBytes(String.valueOf(port1) + " query " + keywordSearch + "\n");
 		outToCentralServer.flush();
 		String fromServer = "";
 		String fullEntry = "";
@@ -186,10 +187,13 @@ public class HostClient {
 			String [] stringArray = fromServer.split(",");
 			int i = 0;
 			for (i = 0; i < stringArray.length; i++){
-			fullEntry += stringArray[i] + " ";
-			fullEntry += stringArray[++i] + " ";
-			fullEntry += stringArray[++i] + " ";
-			fullEntry += "\n";
+			String userHostName = stringArray[i];
+			String connectionType = stringArray[i + 1];
+			String filename = stringArray[i + 2];
+			String quality = stringArray[i + 3];
+			String description = stringArray[i + 4];
+			fullEntry += userHostName + " " + connectionType + " " + filename + " " + quality + " " + description + "\n";
+			i += 4;
 			}
 			responseFromClient = "Query returned with results";	
 		} else {
@@ -207,14 +211,17 @@ public class HostClient {
 		return Integer.parseInt(fromServer);
 	}
 
-	public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+	public void establishConnection (int connectionPort, String retrieveCommand, String fileName) throws IOException {
         //Open connection with other server client
-        int newPort = connectionPort + 2;
         Socket controlSocket = new Socket("127.0.0.1", connectionPort);
-        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
-        
-        //Send retrieval request
-        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + "\n");
+		outToClientServer = new DataOutputStream(controlSocket.getOutputStream());
+		responseFromClient = "Connectiong to user...";
+	}
+
+	public void pullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+		int newPort = connectionPort + 2;
+		//Send retrieval request
+        outToClientServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + " \n");
 
         ServerSocket welcomeData = new ServerSocket(newPort);
         Socket dataSocket = welcomeData.accept();

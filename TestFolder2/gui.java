@@ -197,9 +197,8 @@ public class gui {
                 // code for search
                 String keywordSearch = searchKeyWord.getText();
                 String returnedQuery = "";
-                String clientHostName = hostName.getText();
                 try {
-                    returnedQuery = host.queryFileList(keywordSearch, clientHostName);
+                    returnedQuery = host.queryFileList(keywordSearch);
                     textKeyArea.setText(returnedQuery);
                 } catch (Exception e) {
 
@@ -254,7 +253,15 @@ public class gui {
                 }
                 if(serverToConnectToPort != 0){
                     try{
-                        host.establishConnectionAndPullData(serverToConnectToPort, retrieveCommand, fileName);
+                        host.establishConnection(serverToConnectToPort, retrieveCommand, fileName);
+                        responseFromClient = host.responseFromClient;
+                        printResults();
+                        responseFromClient = "";
+                    } catch (Exception e5){
+
+                    }
+                    try{
+                        host.pullData(serverToConnectToPort, retrieveCommand, fileName);
                         responseFromClient = host.responseFromClient;
                         printResults();
                         responseFromClient = "";

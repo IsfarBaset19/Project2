@@ -20,6 +20,7 @@ public class HostClient {
 	Socket controlSocketCentralServer;
 	DataOutputStream outToCentralServer;
 	BufferedReader inFromCentralServer;
+	DataOutputStream outToClientServer;
 
 	void contructFileList() {
 
@@ -210,14 +211,17 @@ public class HostClient {
 		return Integer.parseInt(fromServer);
 	}
 
-	public void establishConnectionAndPullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+	public void establishConnection (int connectionPort, String retrieveCommand, String fileName) throws IOException {
         //Open connection with other server client
-        int newPort = connectionPort + 2;
         Socket controlSocket = new Socket("127.0.0.1", connectionPort);
-        DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
-        
-        //Send retrieval request
-        outToServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + " \n");
+		outToClientServer = new DataOutputStream(controlSocket.getOutputStream());
+		responseFromClient = "Connectiong to user...";
+	}
+
+	public void pullData (int connectionPort, String retrieveCommand, String fileName) throws IOException {
+		int newPort = connectionPort + 2;
+		//Send retrieval request
+        outToClientServer.writeBytes(newPort + " " + retrieveCommand + " " + fileName + " \n");
 
         ServerSocket welcomeData = new ServerSocket(newPort);
         Socket dataSocket = welcomeData.accept();
